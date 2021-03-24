@@ -1,0 +1,9 @@
+﻿<bg xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
+  <settings-container>
+    <toggle-setting text='Enabled' value='enabled' on-change='setEnabled'></toggle-setting>
+    <toggle-setting text='Use Multiplier' value='useMultiplier' on-change='setUseMultiplier' hover-hint='When True multiplies the current color scheme colors for missed notes, otherwise uses the left/right colors specified in the configuration of this mod'></toggle-setting>
+    <slider-setting active='~useMultiplier' text='Color Multiplier' value='colorMultiplier' on-change='setColorMultiplier' increment='0.05' min='0' max='2' hover-hint='The multiplier to use on notes that were missed on the previous play of the song'></slider-setting>
+    <color-setting active='~notuseMultiplier' text='Left Miss Color' value='leftMiss' on-change='setLeftMiss'></color-setting>
+    <color-setting active='~notuseMultiplier' text='Right Miss Color' value='rightMiss' on-change='setRightMiss'></color-setting>  
+</settings-container>
+</bg>

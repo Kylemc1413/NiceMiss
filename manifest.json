@@ -1,0 +1,16 @@
+﻿{
+  "$schema": "https://raw.githubusercontent.com/beat-saber-modding-group/BSIPA-MetadataFileSchema/master/Schema.json",
+  "id": "NiceMiss",
+  "name": "NiceMiss",
+  "author": "Kyle 1413",
+  "version": "0.4.0",
+  "description": "Points out notes that were missed on a previous playthrough of a song",
+  "gameVersion": "1.13.4",
+  "dependsOn": {
+    "BSIPA": "^4.1.0",
+    "BS Utils": "^1.6.0",
+    "BeatSaberMarkupLanguage": "^1.4.0",
+    "SiraUtil": "^2.0.0"
+  }
+
+}
