@@ -36,10 +36,6 @@ namespace NiceMiss
             outline.OutlineWidth = 4f;
             return;
                 
-            outline.enabled = false;
-            outline.OutlineMode = Outline.Mode.OutlineVisible;
-            outline.OutlineColor = c;
-            outline.OutlineWidth = 4f;
             //   Plugin.log.Debug(Newtonsoft.Json.JsonConvert.SerializeObject(____noteController.noteData));
             if (Plugin.currentMapMisses.Any(x => NotesEqual(x, ____noteController.noteData)))
             {

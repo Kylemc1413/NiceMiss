@@ -102,8 +102,8 @@ namespace NiceMiss
                 var objectmanager = Resources.FindObjectsOfTypeAll<BeatEffectSpawner>().LastOrDefault().GetField<BeatmapObjectManager, BeatEffectSpawner>("_beatmapObjectManager");
         //        colorManager = Resources.FindObjectsOfTypeAll<NoteCutCoreEffectsSpawner>().LastOrDefault().GetField<ColorManager, NoteCutCoreEffectsSpawner>("_colorManager");
                 objectmanager.noteDidStartJumpEvent += Objectmanager_noteDidStartJumpEvent;
-           //     objectmanager.noteWasCutEvent += Objectmanager_noteWasCutEvent;
-           //     objectmanager.noteWasMissedEvent += Objectmanager_noteWasMissedEvent;
+                objectmanager.noteWasCutEvent += Objectmanager_noteWasCutEvent;
+                objectmanager.noteWasMissedEvent += Objectmanager_noteWasMissedEvent;
             }
         }
 
@@ -111,7 +111,9 @@ namespace NiceMiss
         {
             var outline = obj.gameObject.GetComponentInChildren<Outline>();
             if (outline != null)
+            {
                 outline.enabled = false;
+            }
         }
 
         private void Objectmanager_noteWasCutEvent(NoteController noteController, in NoteCutInfo noteCutInfo)
@@ -127,7 +129,7 @@ namespace NiceMiss
             var outline = obj.gameObject.GetComponentInChildren<Outline>();
             if (outline == null)
             {
-                Debug.Log("No Outline");
+                log.Debug("No Outline");
                 return;
             }
             //   Plugin.log.Debug(Newtonsoft.Json.JsonConvert.SerializeObject(____noteController.noteData));
