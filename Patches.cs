@@ -20,12 +20,16 @@ namespace NiceMiss
         static void Postfix(ColorNoteVisuals __instance, NoteController ____noteController, SpriteRenderer ____arrowGlowSpriteRenderer, SpriteRenderer ____circleGlowSpriteRenderer, MaterialPropertyBlockController[] ____materialPropertyBlockControllers, int ____colorId, ref ColorManager ____colorManager)
         {
             if (!Plugin.modActive) return;
-            var outline = ____noteController.noteTransform.gameObject.GetComponent<Outline>();
+            //    Debug.Log("ColorNoteVis Init");
+            var outline = ____noteController.gameObject.GetComponentInChildren<Outline>();
             if (outline == null)
             {
-                outline = ____noteController.noteTransform.gameObject.AddComponent<Outline>();
+          //      Debug.Log("Outline Not Found");
+                outline = ____noteController.gameObject.AddComponent<Outline>();
             }
+
             Color c = ____colorManager.ColorForType(____noteController.noteData.colorType);
+            outline.CheckRenderersValidity();
             outline.enabled = false;
             outline.OutlineMode = Outline.Mode.OutlineVisible;
             outline.OutlineColor = c;

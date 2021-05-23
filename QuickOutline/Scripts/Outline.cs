@@ -152,6 +152,21 @@ namespace NiceMiss
             }
         }
 
+        public void CheckRenderersValidity()
+        {
+            //   if(renderers == null || renderers.Count() < 1 || !renderers[0].gameObject.transform.IsDescendantOf(gameObject.transform))
+            {
+
+                ReInitRenderers();
+            }
+        }
+        void ReInitRenderers()
+        {
+            //Remove Outline Materials if existing from old renderers
+            OnDisable();
+            //Re-grab renderers from gameobject
+            renderers = GetComponentsInChildren<MeshRenderer>();
+        }
         void Update()
         {
             if (needsUpdate)

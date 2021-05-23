@@ -102,21 +102,21 @@ namespace NiceMiss
                 var objectmanager = Resources.FindObjectsOfTypeAll<BeatEffectSpawner>().LastOrDefault().GetField<BeatmapObjectManager, BeatEffectSpawner>("_beatmapObjectManager");
         //        colorManager = Resources.FindObjectsOfTypeAll<NoteCutCoreEffectsSpawner>().LastOrDefault().GetField<ColorManager, NoteCutCoreEffectsSpawner>("_colorManager");
                 objectmanager.noteDidStartJumpEvent += Objectmanager_noteDidStartJumpEvent;
-                objectmanager.noteWasCutEvent += Objectmanager_noteWasCutEvent;
-                objectmanager.noteWasMissedEvent += Objectmanager_noteWasMissedEvent;
+           //     objectmanager.noteWasCutEvent += Objectmanager_noteWasCutEvent;
+           //     objectmanager.noteWasMissedEvent += Objectmanager_noteWasMissedEvent;
             }
         }
 
         private void Objectmanager_noteWasMissedEvent(NoteController obj)
         {
-            var outline = obj.noteTransform.gameObject.GetComponent<Outline>();
+            var outline = obj.gameObject.GetComponentInChildren<Outline>();
             if (outline != null)
                 outline.enabled = false;
         }
 
         private void Objectmanager_noteWasCutEvent(NoteController noteController, in NoteCutInfo noteCutInfo)
         {
-            var outline = noteController.noteTransform.gameObject.GetComponent<Outline>();
+            var outline = noteController.gameObject.GetComponentInChildren<Outline>();
             if (outline != null)
                 outline.enabled = false;
         }
@@ -124,9 +124,10 @@ namespace NiceMiss
         private void Objectmanager_noteDidStartJumpEvent(NoteController obj)
         {
         //    Color c = colorManager.ColorForType(obj.noteData.colorType);
-            var outline = obj.noteTransform.gameObject.GetComponent<Outline>();
+            var outline = obj.gameObject.GetComponentInChildren<Outline>();
             if (outline == null)
             {
+                Debug.Log("No Outline");
                 return;
             }
             //   Plugin.log.Debug(Newtonsoft.Json.JsonConvert.SerializeObject(____noteController.noteData));
@@ -141,6 +142,10 @@ namespace NiceMiss
                 //   var colorable = ____noteController.gameObject.GetComponent<IColorable>();
                 //   if (colorable != null)
                 //       colorable.SetColor(newC);
+            }
+            else
+            {
+
             }
         }
 
