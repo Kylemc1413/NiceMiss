@@ -122,6 +122,10 @@
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.AssetBundleModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Beat Saber\Beat Saber_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
@@ -145,6 +149,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Config.cs" />
+    <EmbeddedResource Include="QuickOutline\QuickOutline-License" />
+    <Compile Include="QuickOutline\Scripts\Outline.cs" />
     <Compile Include="UI\ModifierUI.cs" />
     <Compile Include="Patches.cs" />
     <Compile Include="Plugin.cs" />
@@ -157,6 +163,7 @@
     <None Include="BuildTargets.targets" />
     <None Include=".gitignore" />
     <EmbeddedResource Include="UI\modifierUI.bsml" />
+    <EmbeddedResource Include="QuickOutline\Resources\outlineBundle" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

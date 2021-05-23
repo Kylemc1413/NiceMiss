@@ -4,6 +4,8 @@ using HarmonyLib;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
+using IPA.Utilities;
 namespace NiceMiss
 {
     [Plugin(RuntimeOptions.SingleStartInit)]
@@ -15,6 +17,7 @@ namespace NiceMiss
         public static List<NoteData> currentMapMisses = new List<NoteData>();
         public static List<NoteData> previousNoteMisses = new List<NoteData>();
         public static string lastLevelID = "";
+      //  internal static ColorManager colorManager;
         [Init]
         public Plugin(IPALogger logger)
         {
@@ -30,10 +33,30 @@ namespace NiceMiss
             harmony.PatchAll();
             BeatSaberMarkupLanguage.GameplaySetup.GameplaySetup.instance.AddTab("NiceMiss", "NiceMiss.UI.modifierUI.bsml", UI.ModifierUI.instance, BeatSaberMarkupLanguage.GameplaySetup.MenuType.Solo);
             BS_Utils.Utilities.BSEvents.gameSceneLoaded += BSEvents_gameSceneLoaded;
+            
             BS_Utils.Utilities.BSEvents.noteWasMissed += BSEvents_noteWasMissed;
             BS_Utils.Utilities.BSEvents.noteWasCut += BSEvents_noteWasCut;
+           SharedCoroutineStarter.instance.StartCoroutine(LoadQuickOutlineMaterials());
         }
 
+        public IEnumerator LoadQuickOutlineMaterials()
+        {
+            var quickOutlineBundleRequest = AssetBundle.LoadFromStreamAsync(System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("NiceMiss.QuickOutline.Resources.outlineBundle"));
+            yield return quickOutlineBundleRequest;
+            var quickOutlineBundle = quickOutlineBundleRequest.assetBundle;
+            if (quickOutlineBundle == null)
+            {
+                Plugin.log.Error("Failed To load QuickOutline Bundle");
+                yield break;
+            }
+            var fillMatRequest = quickOutlineBundle.LoadAssetAsync<Material>("OutlineFill");
+            yield return fillMatRequest;
+            Outline.outlineFillMaterialSource = fillMatRequest.asset as Material;
+            var maskMatRequest = quickOutlineBundle.LoadAssetAsync<Material>("OutlineMask");
+            yield return maskMatRequest;
+            Outline.outlineMaskMaterialSource = maskMatRequest.asset as Material;
+            Plugin.log.Debug("Loaded QuickOutline Material Assets");
+        }
         private void BSEvents_noteWasCut(NoteData arg1, NoteCutInfo arg2, int arg3)
         {
             if (!modActive) return;
@@ -73,6 +96,51 @@ namespace NiceMiss
                 currentMapMisses.Clear();
                 previousNoteMisses.Clear();
                 lastLevelID = levelID;
+            }
+            if(modActive)
+            {
+                var objectmanager = Resources.FindObjectsOfTypeAll<BeatEffectSpawner>().LastOrDefault().GetField<BeatmapObjectManager, BeatEffectSpawner>("_beatmapObjectManager");
+        //        colorManager = Resources.FindObjectsOfTypeAll<NoteCutCoreEffectsSpawner>().LastOrDefault().GetField<ColorManager, NoteCutCoreEffectsSpawner>("_colorManager");
+                objectmanager.noteDidStartJumpEvent += Objectmanager_noteDidStartJumpEvent;
+                objectmanager.noteWasCutEvent += Objectmanager_noteWasCutEvent;
+                objectmanager.noteWasMissedEvent += Objectmanager_noteWasMissedEvent;
+            }
+        }
+
+        private void Objectmanager_noteWasMissedEvent(NoteController obj)
+        {
+            var outline = obj.noteTransform.gameObject.GetComponent<Outline>();
+            if (outline != null)
+                outline.enabled = false;
+        }
+
+        private void Objectmanager_noteWasCutEvent(NoteController noteController, in NoteCutInfo noteCutInfo)
+        {
+            var outline = noteController.noteTransform.gameObject.GetComponent<Outline>();
+            if (outline != null)
+                outline.enabled = false;
+        }
+
+        private void Objectmanager_noteDidStartJumpEvent(NoteController obj)
+        {
+        //    Color c = colorManager.ColorForType(obj.noteData.colorType);
+            var outline = obj.noteTransform.gameObject.GetComponent<Outline>();
+            if (outline == null)
+            {
+                return;
+            }
+            //   Plugin.log.Debug(Newtonsoft.Json.JsonConvert.SerializeObject(____noteController.noteData));
+            if (Plugin.currentMapMisses.Any(x => ColorNoteVisualsHandleNoteControllerDidInitEvent.NotesEqual(x, obj.noteData)))
+            {
+                //Plugin.log.Debug($"Coloring Miss");
+                Color newC = Config.useMultiplier ? outline.OutlineColor * Config.colorMultiplier :
+                obj.noteData.colorType == ColorType.ColorA ? Config.leftMissColor : Config.rightMissColor;
+                outline.OutlineColor = newC;
+                outline.enabled = true;
+                //   SetNoteColour(__instance, newC);
+                //   var colorable = ____noteController.gameObject.GetComponent<IColorable>();
+                //   if (colorable != null)
+                //       colorable.SetColor(newC);
             }
         }
 

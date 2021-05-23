@@ -14,23 +14,40 @@ namespace NiceMiss
     [HarmonyPriority(Priority.Low)]
     [HarmonyPatch(typeof(ColorNoteVisuals))]
     [HarmonyPatch("HandleNoteControllerDidInit")]
-    class ColorNoteVisualsHandleNoteControllerDidInitEvent
+    public class ColorNoteVisualsHandleNoteControllerDidInitEvent
     {
         static readonly int colorID = Shader.PropertyToID("_Color");
         static void Postfix(ColorNoteVisuals __instance, NoteController ____noteController, SpriteRenderer ____arrowGlowSpriteRenderer, SpriteRenderer ____circleGlowSpriteRenderer, MaterialPropertyBlockController[] ____materialPropertyBlockControllers, int ____colorId, ref ColorManager ____colorManager)
         {
             if (!Plugin.modActive) return;
+            var outline = ____noteController.noteTransform.gameObject.GetComponent<Outline>();
+            if (outline == null)
+            {
+                outline = ____noteController.noteTransform.gameObject.AddComponent<Outline>();
+            }
             Color c = ____colorManager.ColorForType(____noteController.noteData.colorType);
+            outline.enabled = false;
+            outline.OutlineMode = Outline.Mode.OutlineVisible;
+            outline.OutlineColor = c;
+            outline.OutlineWidth = 4f;
+            return;
+                
+            outline.enabled = false;
+            outline.OutlineMode = Outline.Mode.OutlineVisible;
+            outline.OutlineColor = c;
+            outline.OutlineWidth = 4f;
             //   Plugin.log.Debug(Newtonsoft.Json.JsonConvert.SerializeObject(____noteController.noteData));
             if (Plugin.currentMapMisses.Any(x => NotesEqual(x, ____noteController.noteData)))
             {
                 //Plugin.log.Debug($"Coloring Miss");
                 Color newC = Config.useMultiplier? c * Config.colorMultiplier :
                     ____noteController.noteData.colorType == ColorType.ColorA? Config.leftMissColor : Config.rightMissColor;
-                SetNoteColour(__instance, newC);
-                var colorable = ____noteController.gameObject.GetComponent<IColorable>();
-                if (colorable != null)
-                    colorable.SetColor(newC);
+                outline.OutlineColor = newC;
+                outline.enabled = true;
+             //   SetNoteColour(__instance, newC);
+             //   var colorable = ____noteController.gameObject.GetComponent<IColorable>();
+             //   if (colorable != null)
+             //       colorable.SetColor(newC);
             }
             else
             {
