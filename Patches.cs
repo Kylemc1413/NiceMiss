@@ -19,7 +19,7 @@ namespace NiceMiss
         static readonly int colorID = Shader.PropertyToID("_Color");
         static void Postfix(ColorNoteVisuals __instance, NoteController ____noteController, MaterialPropertyBlockController[] ____materialPropertyBlockControllers, int ____colorId, ref ColorManager ____colorManager)
         {
-            if (!Plugin.modActive) return;
+            if (!NiceMissManager.modActive) return;
             //    Debug.Log("ColorNoteVis Init");
             var outline = ____noteController.gameObject.GetComponentInChildren<Outline>();
             if (outline == null)
@@ -37,7 +37,7 @@ namespace NiceMiss
             return;
                 
             //   Plugin.log.Debug(Newtonsoft.Json.JsonConvert.SerializeObject(____noteController.noteData));
-            if (Plugin.currentMapMisses.Any(x => NotesEqual(x, ____noteController.noteData)))
+            if (NiceMissManager.currentMapData.Any(x => NotesEqual(x.Key, ____noteController.noteData) && x.Value.missed))
             {
                 //Plugin.log.Debug($"Coloring Miss");
                 Color newC = Config.useMultiplier? c * Config.colorMultiplier :

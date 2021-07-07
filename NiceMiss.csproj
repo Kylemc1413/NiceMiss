@@ -160,7 +160,11 @@
   <ItemGroup>
     <Compile Include="Config.cs" />
     <EmbeddedResource Include="QuickOutline\QuickOutline-License" />
+    <Compile Include="Installers\NiceMissGameInstaller.cs" />
     <Compile Include="Installers\NiceMissMenuInstaller.cs" />
+    <Compile Include="NiceMissManager.cs" />
+    <Compile Include="NoteOutliner.cs" />
+    <Compile Include="NoteTracker.cs" />
     <Compile Include="QuickOutline\Scripts\Outline.cs" />
     <Compile Include="UI\ModifierUI.cs" />
     <Compile Include="Patches.cs" />
