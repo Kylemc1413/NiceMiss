@@ -9,6 +9,8 @@ using UnityEngine;
 using IPA;
 using BS_Utils.Utilities;
 using SiraUtil.Interfaces;
+using NiceMiss.Configuration;
+
 namespace NiceMiss
 {
     [HarmonyPriority(Priority.Low)]
@@ -40,8 +42,8 @@ namespace NiceMiss
             if (NiceMissManager.currentMapData.Any(x => NotesEqual(x.Key, ____noteController.noteData) && x.Value.missed))
             {
                 //Plugin.log.Debug($"Coloring Miss");
-                Color newC = Config.useMultiplier? c * Config.colorMultiplier :
-                    ____noteController.noteData.colorType == ColorType.ColorA? Config.leftMissColor : Config.rightMissColor;
+                Color newC = PluginConfig.Instance.UseMultiplier? c * PluginConfig.Instance.ColorMultiplier :
+                    ____noteController.noteData.colorType == ColorType.ColorA? PluginConfig.Instance.LeftMissColor : PluginConfig.Instance.RightMissColor;
                 outline.OutlineColor = newC;
                 outline.enabled = true;
              //   SetNoteColour(__instance, newC);

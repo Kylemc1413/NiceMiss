@@ -1,4 +1,5 @@
-﻿using Zenject;
+﻿using NiceMiss.Configuration;
+using Zenject;
 
 namespace NiceMiss.Installers
 {
@@ -7,7 +8,7 @@ namespace NiceMiss.Installers
         public override void InstallBindings()
         {
             Container.BindInterfacesTo<NiceMissManager>().AsSingle();
-            if (Config.enabled)
+            if (PluginConfig.Instance.Enabled)
             {
                 Container.BindInterfacesAndSelfTo<NoteTracker>().AsSingle();
                 Container.BindInterfacesAndSelfTo<NoteOutliner>().AsSingle();

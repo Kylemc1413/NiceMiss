@@ -2,10 +2,11 @@
 using IPALogger = IPA.Logging.Logger;
 using HarmonyLib;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using SiraUtil.Zenject;
 using NiceMiss.Installers;
+using IPA.Config;
+using IPA.Config.Stores;
 
 namespace NiceMiss
 {
@@ -24,10 +25,16 @@ namespace NiceMiss
             zenjector.OnGame<NiceMissGameInstaller>();
         }
 
+        [Init]
+        public void InitWithConfig(Config conf)
+        {
+            Configuration.PluginConfig.Instance = conf.Generated<Configuration.PluginConfig>();
+            Plugin.log?.Debug("Config loaded");
+        }
+
         [OnStart]
         public void OnApplicationStart()
         {
-            Config.Read();
             var harmony = new Harmony("net.kyle1413.nicemiss");
             harmony.PatchAll();            
            SharedCoroutineStarter.instance.StartCoroutine(LoadQuickOutlineMaterials());
@@ -57,6 +64,5 @@ namespace NiceMiss
         {
 
         }
-
     }
 }

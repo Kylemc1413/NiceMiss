@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NiceMiss.Configuration;
+using System;
 using System.Linq;
 using UnityEngine;
 using Zenject;
@@ -44,8 +45,8 @@ namespace NiceMiss
             if (NiceMissManager.currentMapData.Any(x => ColorNoteVisualsHandleNoteControllerDidInitEvent.NotesEqual(x.Key, obj.noteData) && x.Value.missed))
             {
                 //Plugin.log.Debug($"Coloring Miss");
-                Color newC = Config.useMultiplier ? outline.OutlineColor * Config.colorMultiplier :
-                obj.noteData.colorType == ColorType.ColorA ? Config.leftMissColor : Config.rightMissColor;
+                Color newC = PluginConfig.Instance.UseMultiplier ? outline.OutlineColor * PluginConfig.Instance.ColorMultiplier :
+                obj.noteData.colorType == ColorType.ColorA ? PluginConfig.Instance.LeftMissColor : PluginConfig.Instance.RightMissColor;
                 outline.OutlineColor = newC;
                 outline.enabled = true;
                 //   SetNoteColour(__instance, newC);

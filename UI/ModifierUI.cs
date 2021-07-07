@@ -4,6 +4,7 @@ using BeatSaberMarkupLanguage.Attributes;
 using Zenject;
 using BeatSaberMarkupLanguage.GameplaySetup;
 using System.ComponentModel;
+using NiceMiss.Configuration;
 
 namespace NiceMiss.UI
 {
@@ -64,12 +65,11 @@ namespace NiceMiss.UI
         [UIValue("enabled")]
         public bool modEnabled
         {
-            get => Config.enabled;
+            get => PluginConfig.Instance.Enabled;
             set
             {
-                Config.enabled = value;
+                PluginConfig.Instance.Enabled = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(modEnabled)));
-                Config.Write();
             }
         }
 
@@ -79,49 +79,45 @@ namespace NiceMiss.UI
         [UIValue("useMultiplier")]
         public bool useMultiplier
         {
-            get => Config.useMultiplier;
+            get => PluginConfig.Instance.UseMultiplier;
             set
             {
-                Config.useMultiplier = value;
+                PluginConfig.Instance.UseMultiplier = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(useMultiplier)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(notuseMultiplier)));
-                Config.Write();
             }
         }
 
         [UIValue("colorMultiplier")]
         public float colorMultiplier
         {
-            get => Config.colorMultiplier;
+            get => PluginConfig.Instance.ColorMultiplier;
             set
             {
-                Config.colorMultiplier = value;
+                PluginConfig.Instance.ColorMultiplier = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(colorMultiplier)));
-                Config.Write();
             }
         }
 
         [UIValue("leftMiss")]
         public Color leftMissColor
         {
-            get => Config.leftMissColor;
+            get => PluginConfig.Instance.LeftMissColor;
             set
             {
-                Config.leftMissColor = value;
+                PluginConfig.Instance.LeftMissColor = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(leftMissColor)));
-                Config.Write();
             }
         }
 
         [UIValue("rightMiss")]
         public Color rightMissColor
         {
-            get => Config.rightMissColor;
+            get => PluginConfig.Instance.RightMissColor;
             set
             {
-                Config.rightMissColor = value;
+                PluginConfig.Instance.RightMissColor = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(rightMissColor)));
-                Config.Write();
             }
         }
     }
