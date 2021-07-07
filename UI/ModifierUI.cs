@@ -1,25 +1,81 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using HMUI;
 using UnityEngine;
-using BeatSaberMarkupLanguage;
-using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.Attributes;
+using Zenject;
+using BeatSaberMarkupLanguage.GameplaySetup;
+using System.ComponentModel;
+
 namespace NiceMiss.UI
 {
-    class ModifierUI : NotifiableSingleton<ModifierUI>
+    internal class ModifierUI : IInitializable, IDisposable, INotifyPropertyChanged
     {
-        [UIValue("notuseMultiplier")]
-        private bool notuseMultiplier
+        private GameplaySetupViewController gameplaySetupViewController;
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [UIComponent("left-color-setting")]
+        private RectTransform leftColorSetting;
+
+        private Transform leftColorModal;
+
+        [UIComponent("right-color-setting")]
+        private RectTransform rightColorSetting;
+
+        private Transform rightColorModal;
+
+        public ModifierUI(GameplaySetupViewController gameplaySetupViewController)
         {
-            get => !useMultiplier;
-            set
+            this.gameplaySetupViewController = gameplaySetupViewController;
+        }
+
+        public void Initialize()
+        {
+            GameplaySetup.instance.AddTab(nameof(NiceMiss), "NiceMiss.UI.modifierUI.bsml", this);
+            gameplaySetupViewController.didDeactivateEvent += CloseModalsOnDismiss;
+        }
+
+        public void Dispose()
+        {
+            GameplaySetup.instance?.RemoveTab(nameof(NiceMiss));
+            gameplaySetupViewController.didDeactivateEvent -= CloseModalsOnDismiss;
+        }
+
+        [UIAction("#post-parse")]
+        private void PostParse()
+        {
+            leftColorModal = leftColorSetting.transform.Find("BSMLModalColorPicker");
+            rightColorModal = rightColorSetting.transform.Find("BSMLModalColorPicker");
+        }
+
+        private void CloseModalsOnDismiss(bool removedFromHierarchy, bool screenSystemDisabling)
+        {
+            if (leftColorSetting != null && leftColorModal != null)
             {
+                leftColorModal.SetParent(leftColorSetting);
+                leftColorModal.gameObject.SetActive(false);
+            }
+
+            if (rightColorSetting != null && rightColorModal != null)
+            {
+                rightColorModal.SetParent(rightColorSetting);
+                rightColorModal.gameObject.SetActive(false);
             }
         }
+
+        [UIValue("enabled")]
+        public bool modEnabled
+        {
+            get => Config.enabled;
+            set
+            {
+                Config.enabled = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(modEnabled)));
+                Config.Write();
+            }
+        }
+
+        [UIValue("notuseMultiplier")]
+        private bool notuseMultiplier => !useMultiplier;
+
         [UIValue("useMultiplier")]
         public bool useMultiplier
         {
@@ -27,31 +83,12 @@ namespace NiceMiss.UI
             set
             {
                 Config.useMultiplier = value;
-                NotifyPropertyChanged();
-                NotifyPropertyChanged("notuseMultiplier");
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(useMultiplier)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(notuseMultiplier)));
                 Config.Write();
             }
         }
-        [UIAction("setUseMultiplier")]
-        public void setUseMultiplier(bool value)
-        {
-            useMultiplier = value;
-        }
-       [UIValue("enabled")]
-       public bool modEnabled
-        {
-            get => Config.enabled;
-            set
-            {
-                Config.enabled = value;
-                Config.Write();
-            }
-        }
-        [UIAction("setEnabled")]
-        public void setEnabled(bool value)
-        {
-            modEnabled = value;
-        }
+
         [UIValue("colorMultiplier")]
         public float colorMultiplier
         {
@@ -59,14 +96,11 @@ namespace NiceMiss.UI
             set
             {
                 Config.colorMultiplier = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(colorMultiplier)));
                 Config.Write();
             }
         }
-        [UIAction("setColorMultiplier")]
-        public void setColorMultiplier(float value)
-        {
-            colorMultiplier = value;
-        }
+
         [UIValue("leftMiss")]
         public Color leftMissColor
         {
@@ -74,14 +108,11 @@ namespace NiceMiss.UI
             set
             {
                 Config.leftMissColor = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(leftMissColor)));
                 Config.Write();
             }
         }
-        [UIAction("setLeftMiss")]
-        public void setLeftMiss(Color value)
-        {
-            leftMissColor = value;
-        }
+
         [UIValue("rightMiss")]
         public Color rightMissColor
         {
@@ -89,13 +120,9 @@ namespace NiceMiss.UI
             set
             {
                 Config.rightMissColor = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(rightMissColor)));
                 Config.Write();
             }
-        }
-        [UIAction("setRightMiss")]
-        public void setRightMiss(Color value)
-        {
-            rightMissColor = value;
         }
     }
 }

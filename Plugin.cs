@@ -6,6 +6,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using IPA.Utilities;
+using SiraUtil.Zenject;
+using NiceMiss.Installers;
+
 namespace NiceMiss
 {
     [Plugin(RuntimeOptions.SingleStartInit)]
@@ -19,10 +22,11 @@ namespace NiceMiss
         public static string lastLevelID = "";
       //  internal static ColorManager colorManager;
         [Init]
-        public Plugin(IPALogger logger)
+        public Plugin(IPALogger logger, Zenjector zenjector)
         {
             Instance = this;
             log = logger;
+            zenjector.OnMenu<NiceMissMenuInstaller>();
         }
 
         [OnStart]
@@ -31,7 +35,6 @@ namespace NiceMiss
             Config.Read();
             var harmony = new Harmony("net.kyle1413.nicemiss");
             harmony.PatchAll();
-            BeatSaberMarkupLanguage.GameplaySetup.GameplaySetup.instance.AddTab("NiceMiss", "NiceMiss.UI.modifierUI.bsml", UI.ModifierUI.instance, BeatSaberMarkupLanguage.GameplaySetup.MenuType.Solo);
             BS_Utils.Utilities.BSEvents.gameSceneLoaded += BSEvents_gameSceneLoaded;
             
             BS_Utils.Utilities.BSEvents.noteWasMissed += BSEvents_noteWasMissed;
