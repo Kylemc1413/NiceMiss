@@ -1,15 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using HarmonyLib;
-using System.Collections;
+﻿using HarmonyLib;
 using UnityEngine;
-using IPA;
 using BS_Utils.Utilities;
-using SiraUtil.Interfaces;
-using NiceMiss.Configuration;
 
 namespace NiceMiss
 {
@@ -36,26 +27,6 @@ namespace NiceMiss
             outline.OutlineMode = Outline.Mode.OutlineVisible;
             outline.OutlineColor = c;
             outline.OutlineWidth = 4f;
-            return;
-                
-            //   Plugin.log.Debug(Newtonsoft.Json.JsonConvert.SerializeObject(____noteController.noteData));
-            if (NiceMissManager.currentMapData.Any(x => NotesEqual(x.Key, ____noteController.noteData) && x.Value.missed))
-            {
-                //Plugin.log.Debug($"Coloring Miss");
-                Color newC = PluginConfig.Instance.UseMultiplier? c * PluginConfig.Instance.ColorMultiplier :
-                    ____noteController.noteData.colorType == ColorType.ColorA? PluginConfig.Instance.LeftMissColor : PluginConfig.Instance.RightMissColor;
-                outline.OutlineColor = newC;
-                outline.enabled = true;
-             //   SetNoteColour(__instance, newC);
-             //   var colorable = ____noteController.gameObject.GetComponent<IColorable>();
-             //   if (colorable != null)
-             //       colorable.SetColor(newC);
-            }
-            else
-            {
-          //      Plugin.log.Debug($"No Matching Miss");
-            }
-
         }
 
         public static void SetNoteColour(ColorNoteVisuals noteVis, Color c)

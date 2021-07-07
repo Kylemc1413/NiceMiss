@@ -1,5 +1,6 @@
 ﻿using NiceMiss.Configuration;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Zenject;
@@ -42,13 +43,39 @@ namespace NiceMiss
                 return;
             }
             //   Plugin.log.Debug(Newtonsoft.Json.JsonConvert.SerializeObject(____noteController.noteData));
-            if (NiceMissManager.currentMapData.Any(x => ColorNoteVisualsHandleNoteControllerDidInitEvent.NotesEqual(x.Key, obj.noteData) && x.Value.missed))
+            var noteRating = NiceMissManager.currentMapData.Where(x => ColorNoteVisualsHandleNoteControllerDidInitEvent.NotesEqual(x.Key, obj.noteData)).FirstOrDefault();
+            if (!noteRating.Equals(default(KeyValuePair<NoteData, NoteTracker.Rating>)))
             {
                 //Plugin.log.Debug($"Coloring Miss");
-                Color newC = PluginConfig.Instance.UseMultiplier ? outline.OutlineColor * PluginConfig.Instance.ColorMultiplier :
-                obj.noteData.colorType == ColorType.ColorA ? PluginConfig.Instance.LeftMissColor : PluginConfig.Instance.RightMissColor;
-                outline.OutlineColor = newC;
-                outline.enabled = true;
+                Color newC = Color.clear;
+                if (!PluginConfig.Instance.AccColoring && noteRating.Value.missed)
+                {
+                    newC = PluginConfig.Instance.UseMultiplier ? outline.OutlineColor * PluginConfig.Instance.ColorMultiplier :
+                    obj.noteData.colorType == ColorType.ColorA ? PluginConfig.Instance.LeftMissColor : PluginConfig.Instance.RightMissColor;
+                }
+                else if (PluginConfig.Instance.AccColoring)
+                {
+                    if (noteRating.Value.missed)
+                    {
+                        newC = PluginConfig.Instance.AccMissColor;
+                    }
+                    else
+                    {
+                        foreach (var accColor in PluginConfig.Instance.AccColors)
+                        {
+                            if (accColor.threshold <= noteRating.Value.hitScore)
+                            {
+                                newC = accColor.color;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (newC != Color.clear)
+                {
+                    outline.OutlineColor = newC;
+                    outline.enabled = true;
+                }
                 //   SetNoteColour(__instance, newC);
                 //   var colorable = ____noteController.gameObject.GetComponent<IColorable>();
                 //   if (colorable != null)

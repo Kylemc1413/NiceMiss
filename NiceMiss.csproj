@@ -160,6 +160,7 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="QuickOutline\QuickOutline-License" />
+    <Compile Include="Configuration\AccColor.cs" />
     <Compile Include="Configuration\PluginConfig.cs" />
     <Compile Include="Installers\NiceMissGameInstaller.cs" />
     <Compile Include="Installers\NiceMissMenuInstaller.cs" />
