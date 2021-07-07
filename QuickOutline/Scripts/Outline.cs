@@ -101,7 +101,7 @@ namespace NiceMiss
         {
 
             // Cache renderers
-            renderers = GetComponentsInChildren<MeshRenderer>();
+            ReInitRenderers();
 
             // Instantiate outline materials
             outlineMaskMaterial = Instantiate(outlineMaskMaterialSource);
@@ -166,6 +166,8 @@ namespace NiceMiss
             OnDisable();
             //Re-grab renderers from gameobject
             renderers = GetComponentsInChildren<MeshRenderer>();
+            if (renderers.Length > 1)
+                renderers = renderers.Where(x => x.gameObject.name != "NoteArrowGlow" && x.gameObject.name != "NoteCircleGlow").ToArray();
         }
         void Update()
         {
@@ -179,6 +181,7 @@ namespace NiceMiss
 
         void OnDisable()
         {
+            if (renderers == null) return;
             foreach (var renderer in renderers)
             {
 

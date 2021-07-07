@@ -17,7 +17,7 @@ namespace NiceMiss
     public class ColorNoteVisualsHandleNoteControllerDidInitEvent
     {
         static readonly int colorID = Shader.PropertyToID("_Color");
-        static void Postfix(ColorNoteVisuals __instance, NoteController ____noteController, SpriteRenderer ____arrowGlowSpriteRenderer, SpriteRenderer ____circleGlowSpriteRenderer, MaterialPropertyBlockController[] ____materialPropertyBlockControllers, int ____colorId, ref ColorManager ____colorManager)
+        static void Postfix(ColorNoteVisuals __instance, NoteController ____noteController, MaterialPropertyBlockController[] ____materialPropertyBlockControllers, int ____colorId, ref ColorManager ____colorManager)
         {
             if (!Plugin.modActive) return;
             //    Debug.Log("ColorNoteVis Init");

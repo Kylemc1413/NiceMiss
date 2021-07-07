@@ -106,7 +106,7 @@ namespace NiceMiss
                 objectmanager.noteWasMissedEvent += Objectmanager_noteWasMissedEvent;
             }
         }
-
+        
         private void Objectmanager_noteWasMissedEvent(NoteController obj)
         {
             var outline = obj.gameObject.GetComponentInChildren<Outline>();
