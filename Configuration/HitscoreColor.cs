@@ -12,7 +12,8 @@ namespace NiceMiss.Configuration
         [UseConverter(typeof(EnumConverter<TypeEnum>))]
         public TypeEnum type;
 
-        public virtual int threshold { get; set; }
+        public virtual int min { get; set; }
+        public virtual int max { get; set; }
 
         [UseConverter(typeof(HexColorConverter))]
         public virtual Color color { get; set; }
@@ -21,10 +22,11 @@ namespace NiceMiss.Configuration
         {
         }
 
-        public HitscoreColor(TypeEnum type, int threshold, Color color)
+        public HitscoreColor(TypeEnum type, int min, int max, Color color)
         {
             this.type = type;
-            this.threshold = threshold;
+            this.min = min;
+            this.max = max;
             this.color = color;
         }
 

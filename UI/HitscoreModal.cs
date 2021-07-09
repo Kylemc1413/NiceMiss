@@ -22,8 +22,11 @@ namespace NiceMiss.UI
         public event Action<HitscoreColor> EntryAdded;
         public event PropertyChangedEventHandler PropertyChanged;
 
-        [UIComponent("thresholdSlider")]
-        private SliderSetting thresholdSlider;
+        [UIComponent("minSlider")]
+        private SliderSetting minSlider;
+
+        [UIComponent("maxSlider")]
+        private SliderSetting maxSlider;
 
         [UIComponent("leftButton")]
         private RectTransform leftButton;
@@ -68,9 +71,14 @@ namespace NiceMiss.UI
             if (!parsed)
             {
                 BSMLParser.instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "NiceMiss.UI.hitscoreModal.bsml"), parent.gameObject, this);
+
                 parsed = true;
                 hitscoreColorModal = hitscoreColorSetting.transform.Find("BSMLModalColorPicker").GetComponent<ModalView>();
-                SliderButton.Register(leftButton, rightButton, thresholdSlider, 1);
+
+                SliderButton.Register(GameObject.Instantiate(leftButton), GameObject.Instantiate(rightButton), minSlider, 1);
+                SliderButton.Register(GameObject.Instantiate(leftButton), GameObject.Instantiate(rightButton), maxSlider, 1);
+                GameObject.Destroy(leftButton.gameObject);
+                GameObject.Destroy(rightButton.gameObject);
             }
             FieldAccessor<ModalView, bool>.Set(ref hitscoreColorModal, "_animateParentCanvas", false);
             FieldAccessor<ModalView, bool>.Set(ref modalView, "_animateParentCanvas", true);
@@ -80,9 +88,10 @@ namespace NiceMiss.UI
         {
             hitscoreColor = new HitscoreColor();
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(type)));
-            UpdateMaxThreshold();
+            UpdateSliderRange();
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(notUseMiss)));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(threshold)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(min)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(max)));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(color)));
 
             Parse(parent);
@@ -112,41 +121,65 @@ namespace NiceMiss.UI
             set
             {
                 hitscoreColor.type = (HitscoreColor.TypeEnum)value;
-                hitscoreColor.threshold = 0;
+                hitscoreColor.min = 0;
+                hitscoreColor.max = 0;
 
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(type)));
-                UpdateMaxThreshold();
+                UpdateSliderRange();
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(notUseMiss)));
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(threshold)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(min)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(max)));
             }
         }
 
         [UIAction("typeFormatter")]
         private string TypeFormatter(int typeNum) => ((HitscoreColor.TypeEnum)typeNum).ToString();
 
-        [UIValue("threshold")]
-        private int threshold
+        [UIValue("min")]
+        private int min
         {
-            get => hitscoreColor.threshold;
+            get => hitscoreColor.min;
             set
             {
-                hitscoreColor.threshold = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(threshold)));
+                hitscoreColor.min = value;
+                if (value > max)
+                {
+                    max = value;
+                }
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(min)));
             }
         }
 
-        private void UpdateMaxThreshold()
+        [UIValue("max")]
+        private int max
+        {
+            get => hitscoreColor.max;
+            set
+            {
+                hitscoreColor.max = value;
+                if (value < min)
+                {
+                    min = value;
+                }
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(max)));
+            }
+        }
+
+        private void UpdateSliderRange()
         {
             switch (hitscoreColor.type)
             {
                 case HitscoreColor.TypeEnum.Hitscore:
-                    thresholdSlider.slider.maxValue = 115;
+                    minSlider.slider.maxValue = 115;
+                    maxSlider.slider.maxValue = 115;
                     break;
                 case HitscoreColor.TypeEnum.Angle:
-                    thresholdSlider.slider.maxValue = 100;
+                    minSlider.slider.maxValue = 100;
+                    maxSlider.slider.maxValue = 100;
                     break;
                 case HitscoreColor.TypeEnum.Accuracy:
-                    thresholdSlider.slider.maxValue = 15;
+                    minSlider.slider.maxValue = 100;
+                    maxSlider.slider.maxValue = 15;
                     break;
             }
         }

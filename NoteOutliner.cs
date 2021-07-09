@@ -78,7 +78,7 @@ namespace NiceMiss
                                     break;
                             }
 
-                            if (hitscoreColor.threshold <= score)
+                            if (hitscoreColor.min <= score && score <= hitscoreColor.max)
                             {
                                 newC = hitscoreColor.color;
                                 break;

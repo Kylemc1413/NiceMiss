@@ -99,7 +99,7 @@ namespace NiceMiss.UI
                 }
                 else
                 {
-                    customListTableData.data.Add(new CustomListTableData.CustomCellInfo($"{hitscoreColor.type}: {hitscoreColor.threshold} (<color={colorString}>{colorString}</color>)"));
+                    customListTableData.data.Add(new CustomListTableData.CustomCellInfo($"{hitscoreColor.type}: {hitscoreColor.min}-{hitscoreColor.max} (<color={colorString}>{colorString}</color>)"));
                 }
             }
             customListTableData.tableView.ReloadDataKeepingPosition();
@@ -127,10 +127,10 @@ namespace NiceMiss.UI
         {
             if (entryToAdd.type == HitscoreColor.TypeEnum.Miss)
             {
-                entryToAdd.threshold = 0;
+                entryToAdd.max = 0;
             }
 
-            int duplicateEntryIndex = PluginConfig.Instance.HitscoreColors.FindIndex(x => x.threshold == entryToAdd.threshold && x.type == entryToAdd.type);
+            int duplicateEntryIndex = PluginConfig.Instance.HitscoreColors.FindIndex(x => x.max == entryToAdd.max && x.type == entryToAdd.type);
             if (duplicateEntryIndex != -1)
             {
                 PluginConfig.Instance.HitscoreColors[duplicateEntryIndex] = entryToAdd;

@@ -29,7 +29,7 @@ namespace NiceMiss.Configuration
         public virtual Color RightMissColor { get; set; } = Color.blue;
 
         [UseConverter(typeof(ListConverter<HitscoreColor>))]
-        public virtual List<HitscoreColor> HitscoreColors { get; set; } = new List<HitscoreColor>() { new HitscoreColor(HitscoreColor.TypeEnum.Hitscore, 115, Color.white) };
+        public virtual List<HitscoreColor> HitscoreColors { get; set; } = new List<HitscoreColor>();
 
         /// <summary>
         /// Call this to force BSIPA to update the config file. This is also called by BSIPA if it detects the file was modified.
