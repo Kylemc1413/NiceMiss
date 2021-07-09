@@ -5,39 +5,55 @@ using Zenject;
 using BeatSaberMarkupLanguage.GameplaySetup;
 using System.ComponentModel;
 using NiceMiss.Configuration;
+using BeatSaberMarkupLanguage.Components;
+using HMUI;
 
 namespace NiceMiss.UI
 {
     internal class ModifierUI : IInitializable, IDisposable, INotifyPropertyChanged
     {
-        private GameplaySetupViewController gameplaySetupViewController;
+        private readonly GameplaySetupViewController gameplaySetupViewController;
+        private readonly HitscoreModal hitscoreModal;
         public event PropertyChangedEventHandler PropertyChanged;
 
-        [UIComponent("left-color-setting")]
+        [UIComponent("hitscoreList")]
+        public CustomListTableData customListTableData;
+
+        [UIComponent("root")]
+        private readonly RectTransform rootTransform;
+
+        [UIComponent("leftColorSetting")]
         private RectTransform leftColorSetting;
 
         private Transform leftColorModal;
 
-        [UIComponent("right-color-setting")]
+        [UIComponent("rightColorSetting")]
         private RectTransform rightColorSetting;
 
         private Transform rightColorModal;
 
-        public ModifierUI(GameplaySetupViewController gameplaySetupViewController)
+        public ModifierUI(GameplaySetupViewController gameplaySetupViewController, HitscoreModal hitscoreModal)
         {
             this.gameplaySetupViewController = gameplaySetupViewController;
+            this.hitscoreModal = hitscoreModal;
         }
 
         public void Initialize()
         {
             GameplaySetup.instance.AddTab(nameof(NiceMiss), "NiceMiss.UI.modifierUI.bsml", this);
+            selectedIndex = -1;
+
             gameplaySetupViewController.didDeactivateEvent += CloseModalsOnDismiss;
+            hitscoreModal.EntryAdded += OnEntryAdded;
+            PluginConfig.Instance.ConfigChanged += UpdateTable;
         }
 
         public void Dispose()
         {
             GameplaySetup.instance?.RemoveTab(nameof(NiceMiss));
             gameplaySetupViewController.didDeactivateEvent -= CloseModalsOnDismiss;
+            hitscoreModal.EntryAdded -= OnEntryAdded;
+            PluginConfig.Instance.ConfigChanged -= UpdateTable;
         }
 
         [UIAction("#post-parse")]
@@ -45,6 +61,29 @@ namespace NiceMiss.UI
         {
             leftColorModal = leftColorSetting.transform.Find("BSMLModalColorPicker");
             rightColorModal = rightColorSetting.transform.Find("BSMLModalColorPicker");
+            UpdateTable();
+        }
+
+        private void UpdateTable()
+        {
+            customListTableData.tableView.ClearSelection();
+            selectedIndex = -1;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(entrySelected)));
+
+            customListTableData.data.Clear();
+            foreach(var hitscoreColor in PluginConfig.Instance.HitscoreColors)
+            {
+                string colorString = $"#{ColorUtility.ToHtmlStringRGB(hitscoreColor.color)}";
+                if (hitscoreColor.type == HitscoreColor.TypeEnum.Miss)
+                {
+                    customListTableData.data.Add(new CustomListTableData.CustomCellInfo($"Miss (<color={colorString}>{colorString}</color>)"));
+                }
+                else
+                {
+                    customListTableData.data.Add(new CustomListTableData.CustomCellInfo($"{hitscoreColor.threshold} (<color={colorString}>{colorString}</color>)"));
+                }
+            }
+            customListTableData.tableView.ReloadData();
         }
 
         private void CloseModalsOnDismiss(bool removedFromHierarchy, bool screenSystemDisabling)
@@ -62,8 +101,53 @@ namespace NiceMiss.UI
             }
         }
 
+        [UIAction("addEntry")]
+        private void AddEntry() => hitscoreModal.ShowModal(rootTransform);
+
+        private void OnEntryAdded(HitscoreColor entryToAdd)
+        {
+            if (entryToAdd.type == HitscoreColor.TypeEnum.Miss)
+            {
+                entryToAdd.threshold = 0;
+            }
+
+            int duplicateEntryIndex = PluginConfig.Instance.HitscoreColors.FindIndex(x => x.threshold == entryToAdd.threshold && x.type == entryToAdd.type);
+            if (duplicateEntryIndex != -1)
+            {
+                PluginConfig.Instance.HitscoreColors[duplicateEntryIndex] = entryToAdd;
+            }
+            else
+            {
+                PluginConfig.Instance.HitscoreColors.Add(entryToAdd);
+            }
+
+            PluginConfig.Instance.Changed();
+        }
+
+        private int selectedIndex;
+
+        [UIValue("entrySelected")]
+        private bool entrySelected => selectedIndex >= 0;
+
+        [UIAction("hitscoreSelect")]
+        private void HitscoreSelect(TableView _, int selectedIndex)
+        {
+            this.selectedIndex = selectedIndex;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(entrySelected)));
+        }
+
+        [UIAction("removeEntry")]
+        private void RemoveEntry()
+        {
+            PluginConfig.Instance.HitscoreColors.RemoveAt(selectedIndex);
+            UpdateTable();
+        }
+
+        [UIAction("modeFormatter")]
+        private string ModeFormatter(int modeNum) => ((PluginConfig.ModeEnum)modeNum).ToString();
+
         [UIValue("enabled")]
-        public bool modEnabled
+        private bool modEnabled
         {
             get => PluginConfig.Instance.Enabled;
             set
@@ -73,23 +157,31 @@ namespace NiceMiss.UI
             }
         }
 
-        [UIValue("notuseMultiplier")]
-        private bool notuseMultiplier => !useMultiplier;
-
-        [UIValue("useMultiplier")]
-        public bool useMultiplier
+        [UIValue("mode")]
+        private int mode
         {
-            get => PluginConfig.Instance.UseMultiplier;
+            get => (int)PluginConfig.Instance.Mode;
             set
             {
-                PluginConfig.Instance.UseMultiplier = value;
+                PluginConfig.Instance.Mode = (PluginConfig.ModeEnum)value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(mode)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(useMultiplier)));
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(notuseMultiplier)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(useOutline)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(useHitscore)));
             }
         }
 
+        [UIValue("useMultiplier")]
+        private bool useMultiplier => mode == 0;
+
+        [UIValue("useOutline")]
+        private bool useOutline => mode == 1;
+
+        [UIValue("useHitscore")]
+        private bool useHitscore => mode == 2;
+
         [UIValue("colorMultiplier")]
-        public float colorMultiplier
+        private float colorMultiplier
         {
             get => PluginConfig.Instance.ColorMultiplier;
             set
@@ -100,7 +192,7 @@ namespace NiceMiss.UI
         }
 
         [UIValue("leftMiss")]
-        public Color leftMissColor
+        private Color leftMissColor
         {
             get => PluginConfig.Instance.LeftMissColor;
             set
@@ -111,7 +203,7 @@ namespace NiceMiss.UI
         }
 
         [UIValue("rightMiss")]
-        public Color rightMissColor
+        private Color rightMissColor
         {
             get => PluginConfig.Instance.RightMissColor;
             set

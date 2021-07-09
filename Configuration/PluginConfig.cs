@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using IPA.Config.Stores;
 using IPA.Config.Stores.Attributes;
@@ -11,9 +12,13 @@ namespace NiceMiss.Configuration
     internal class PluginConfig
     {
         public static PluginConfig Instance { get; set; }
+        public event Action ConfigChanged;
         public virtual bool Enabled { get; set; } = false;
+
+        [UseConverter(typeof(EnumConverter<ModeEnum>))]
+        public virtual ModeEnum Mode { get; set; } = ModeEnum.Multiplier;
+
         public virtual float ColorMultiplier { get; set; } = 1.85f;
-        public virtual bool UseMultiplier { get; set; } = true;
 
         [UseConverter(typeof(HexColorConverter))]
         public virtual Color LeftMissColor { get; set; } = Color.red;
@@ -21,20 +26,15 @@ namespace NiceMiss.Configuration
         [UseConverter(typeof(HexColorConverter))]
         public virtual Color RightMissColor { get; set; } = Color.blue;
 
-        public virtual bool AccColoring { get; set; } = false;
-
-        [UseConverter(typeof(HexColorConverter))]
-        public virtual Color AccMissColor { get; set; } = Color.black;
-
-        [UseConverter(typeof(ListConverter<AccColor>))]
-        public virtual List<AccColor> AccColors { get; set; } = new List<AccColor>() { new AccColor(115, Color.white) };
+        [UseConverter(typeof(ListConverter<HitscoreColor>))]
+        public virtual List<HitscoreColor> HitscoreColors { get; set; } = new List<HitscoreColor>() { new HitscoreColor(HitscoreColor.TypeEnum.Hitscore, 115, Color.white) };
 
         /// <summary>
         /// Call this to force BSIPA to update the config file. This is also called by BSIPA if it detects the file was modified.
         /// </summary>
         public virtual void Changed()
         {
-            // Do stuff when the config is changed.
+            ConfigChanged?.Invoke();
         }
 
         /// <summary>
@@ -43,6 +43,13 @@ namespace NiceMiss.Configuration
         public virtual void CopyFrom(PluginConfig other)
         {
             // This instance's members populated from other
+        }
+
+        public enum ModeEnum
+        {
+            Multiplier,
+            Outline,
+            Hitscore
         }
     }
 }

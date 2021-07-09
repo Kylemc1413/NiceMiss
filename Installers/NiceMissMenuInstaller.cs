@@ -8,6 +8,7 @@ namespace NiceMiss.Installers
         public override void InstallBindings()
         {
             Container.BindInterfacesTo<ModifierUI>().AsSingle();
+            Container.BindInterfacesAndSelfTo<HitscoreModal>().AsSingle();
         }
     }
 }

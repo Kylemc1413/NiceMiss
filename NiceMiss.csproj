@@ -159,8 +159,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="UI\SliderButton.cs" />
     <EmbeddedResource Include="QuickOutline\QuickOutline-License" />
-    <Compile Include="Configuration\AccColor.cs" />
+    <Compile Include="Configuration\HitscoreColor.cs" />
     <Compile Include="Configuration\PluginConfig.cs" />
     <Compile Include="Installers\NiceMissGameInstaller.cs" />
     <Compile Include="Installers\NiceMissMenuInstaller.cs" />
@@ -168,6 +169,7 @@
     <Compile Include="NoteOutliner.cs" />
     <Compile Include="NoteTracker.cs" />
     <Compile Include="QuickOutline\Scripts\Outline.cs" />
+    <Compile Include="UI\HitscoreModal.cs" />
     <Compile Include="UI\ModifierUI.cs" />
     <Compile Include="Patches.cs" />
     <Compile Include="Plugin.cs" />
@@ -181,6 +183,7 @@
     <None Include=".gitignore" />
     <EmbeddedResource Include="UI\modifierUI.bsml" />
     <EmbeddedResource Include="QuickOutline\Resources\outlineBundle" />
+    <EmbeddedResource Include="UI\hitscoreModal.bsml" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -10,6 +10,7 @@ namespace NiceMiss
     internal class NoteOutliner : IInitializable, IDisposable
     {
         private readonly BeatmapObjectManager objectmanager;
+        private HitscoreColor missColor;
 
         public NoteOutliner(BeatmapObjectManager objectmanager)
         {
@@ -24,6 +25,7 @@ namespace NiceMiss
                 objectmanager.noteWasCutEvent += Objectmanager_noteWasCutEvent;
                 objectmanager.noteWasMissedEvent += Objectmanager_noteWasMissedEvent;
             }
+            missColor = PluginConfig.Instance.Mode == PluginConfig.ModeEnum.Hitscore ? PluginConfig.Instance.HitscoreColors.Find(x => x.type == HitscoreColor.TypeEnum.Miss) : null;
         }
 
         public void Dispose()
@@ -42,30 +44,28 @@ namespace NiceMiss
                 Plugin.log.Debug("No Outline");
                 return;
             }
-            //   Plugin.log.Debug(Newtonsoft.Json.JsonConvert.SerializeObject(____noteController.noteData));
             var noteRating = NiceMissManager.currentMapData.Where(x => ColorNoteVisualsHandleNoteControllerDidInitEvent.NotesEqual(x.Key, obj.noteData)).FirstOrDefault();
             if (!noteRating.Equals(default(KeyValuePair<NoteData, NoteTracker.Rating>)))
             {
-                //Plugin.log.Debug($"Coloring Miss");
                 Color newC = Color.clear;
-                if (!PluginConfig.Instance.AccColoring && noteRating.Value.missed)
+                if (PluginConfig.Instance.Mode != PluginConfig.ModeEnum.Hitscore && noteRating.Value.missed)
                 {
-                    newC = PluginConfig.Instance.UseMultiplier ? outline.OutlineColor * PluginConfig.Instance.ColorMultiplier :
+                    newC = PluginConfig.Instance.Mode == PluginConfig.ModeEnum.Multiplier ? outline.OutlineColor * PluginConfig.Instance.ColorMultiplier :
                     obj.noteData.colorType == ColorType.ColorA ? PluginConfig.Instance.LeftMissColor : PluginConfig.Instance.RightMissColor;
                 }
-                else if (PluginConfig.Instance.AccColoring)
+                else if (PluginConfig.Instance.Mode == PluginConfig.ModeEnum.Hitscore)
                 {
-                    if (noteRating.Value.missed)
+                    if (noteRating.Value.missed && missColor != null)
                     {
-                        newC = PluginConfig.Instance.AccMissColor;
+                        newC = missColor.color;
                     }
                     else
                     {
-                        foreach (var accColor in PluginConfig.Instance.AccColors)
+                        foreach (var hitscoreColor in PluginConfig.Instance.HitscoreColors)
                         {
-                            if (accColor.threshold <= noteRating.Value.hitScore)
+                            if (hitscoreColor.threshold <= noteRating.Value.hitScore && hitscoreColor.type == HitscoreColor.TypeEnum.Hitscore)
                             {
-                                newC = accColor.color;
+                                newC = hitscoreColor.color;
                                 break;
                             }
                         }
@@ -76,10 +76,6 @@ namespace NiceMiss
                     outline.OutlineColor = newC;
                     outline.enabled = true;
                 }
-                //   SetNoteColour(__instance, newC);
-                //   var colorable = ____noteController.gameObject.GetComponent<IColorable>();
-                //   if (colorable != null)
-                //       colorable.SetColor(newC);
             }
         }
 
