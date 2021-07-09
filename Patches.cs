@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using UnityEngine;
-using BS_Utils.Utilities;
 using NiceMiss.Configuration;
+using IPA.Utilities;
 
 namespace NiceMiss
 {
@@ -32,10 +32,10 @@ namespace NiceMiss
 
         public static void SetNoteColour(ColorNoteVisuals noteVis, Color c)
         {
-            noteVis.SetField("_noteColor", c);
-            SpriteRenderer ____arrowGlowSpriteRenderer = noteVis.GetField<SpriteRenderer>("_arrowGlowSpriteRenderer");
-            SpriteRenderer ____circleGlowSpriteRenderer = noteVis.GetField<SpriteRenderer>("_circleGlowSpriteRenderer");
-            MaterialPropertyBlockController[] ____materialPropertyBlockController = noteVis.GetField<MaterialPropertyBlockController[]>("_materialPropertyBlockControllers");
+            FieldAccessor<ColorNoteVisuals, Color>.Set(ref noteVis, "_noteColor", c);
+            SpriteRenderer ____arrowGlowSpriteRenderer = FieldAccessor<ColorNoteVisuals, SpriteRenderer>.Get(ref noteVis, "_arrowGlowSpriteRenderer");
+            SpriteRenderer ____circleGlowSpriteRenderer = FieldAccessor<ColorNoteVisuals, SpriteRenderer>.Get(ref noteVis, "_circleGlowSpriteRenderer");
+            MaterialPropertyBlockController[] ____materialPropertyBlockController = FieldAccessor<ColorNoteVisuals, MaterialPropertyBlockController[]>.Get(ref noteVis, "_materialPropertyBlockControllers");
             if (____arrowGlowSpriteRenderer != null) ____arrowGlowSpriteRenderer.color = c;
             if (____circleGlowSpriteRenderer != null) ____circleGlowSpriteRenderer.color = c;
             foreach (var block in ____materialPropertyBlockController)
