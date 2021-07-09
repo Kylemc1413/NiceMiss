@@ -79,6 +79,11 @@ namespace NiceMiss.UI
         public void ShowModal(Transform parent)
         {
             hitscoreColor = new HitscoreColor();
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(type)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(useHitscore)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(hitscoreThreshold)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(color)));
+
             Parse(parent);
             parserParams.EmitEvent("closeModal");
             parserParams.EmitEvent("openModal");
