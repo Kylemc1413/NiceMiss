@@ -39,14 +39,14 @@ namespace NiceMiss
 
         private void ScoreController_noteWasMissedEvent(NoteData noteData, int _)
         {
-            currentMapData[noteData] = new Rating(0, true);
+            currentMapData[noteData] = new Rating(true);
         }
 
         private void ScoreController_noteWasCutEvent(NoteData noteData, in NoteCutInfo noteCutInfo, int multiplier)
         {
             if (noteData.colorType != ColorType.None && !noteCutInfo.allIsOK)
             {
-                currentMapData[noteData] = new Rating(0, true);
+                currentMapData[noteData] = new Rating(true);
             }
             else
             {
@@ -56,8 +56,8 @@ namespace NiceMiss
                 noteCutInfo.swingRatingCounter.RegisterDidFinishReceiver(this);
                 int beforeCutRawScore, afterCutRawScore, cutDistanceRawScore;
                 ScoreModel.RawScoreWithoutMultiplier(noteCutInfo.swingRatingCounter, noteCutInfo.cutDistanceToCenter, out beforeCutRawScore, out afterCutRawScore, out cutDistanceRawScore);
-                int totalScore = beforeCutRawScore + afterCutRawScore + cutDistanceRawScore;
-                currentMapData[noteData] = new Rating(totalScore, false);
+                int angle = beforeCutRawScore + afterCutRawScore;
+                currentMapData[noteData] = new Rating(angle, cutDistanceRawScore);
             }
         }
 
@@ -68,11 +68,11 @@ namespace NiceMiss
             if (swingCounterCutInfo.TryGetValue(saberSwingRatingCounter, out noteCutInfo))
             {
                 ScoreModel.RawScoreWithoutMultiplier(saberSwingRatingCounter, noteCutInfo.cutDistanceToCenter, out beforeCutRawScore, out afterCutRawScore, out cutDistanceRawScore);
-                int totalScore = beforeCutRawScore + afterCutRawScore + cutDistanceRawScore;
+                int angle = beforeCutRawScore + afterCutRawScore;
                 NoteData noteData;
                 if (noteCutInfoData.TryGetValue(noteCutInfo, out noteData))
                 {
-                    currentMapData[noteData] = new Rating(totalScore, false);
+                    currentMapData[noteData] = new Rating(angle, cutDistanceRawScore);
                 }
             }
         }
@@ -86,13 +86,25 @@ namespace NiceMiss
 
         public struct Rating
         {
-            public Rating(int hitScore, bool missed)
+            public Rating(int angle, int accuracy)
             {
-                this.hitScore = hitScore;
+                hitScore = angle + accuracy;
+                this.angle = angle;
+                this.accuracy = accuracy;
+                missed = false;
+            }
+
+            public Rating(bool missed)
+            {
+                hitScore = 0;
+                angle = 0;
+                accuracy = 0;
                 this.missed = missed;
             }
 
             public int hitScore;
+            public int angle;
+            public int accuracy;
             public bool missed;
         }
     }

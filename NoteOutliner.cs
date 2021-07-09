@@ -63,7 +63,22 @@ namespace NiceMiss
                     {
                         foreach (var hitscoreColor in PluginConfig.Instance.HitscoreColors)
                         {
-                            if (hitscoreColor.threshold <= noteRating.Value.hitScore && hitscoreColor.type == HitscoreColor.TypeEnum.Hitscore)
+                            int score = -1;
+
+                            switch (hitscoreColor.type)
+                            {
+                                case HitscoreColor.TypeEnum.Hitscore:
+                                    score = noteRating.Value.hitScore;
+                                    break;
+                                case HitscoreColor.TypeEnum.Angle:
+                                    score = noteRating.Value.angle;
+                                    break;
+                                case HitscoreColor.TypeEnum.Accuracy:
+                                    score = noteRating.Value.accuracy;
+                                    break;
+                            }
+
+                            if (hitscoreColor.threshold <= score)
                             {
                                 newC = hitscoreColor.color;
                                 break;

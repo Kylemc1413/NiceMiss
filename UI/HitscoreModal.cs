@@ -80,8 +80,9 @@ namespace NiceMiss.UI
         {
             hitscoreColor = new HitscoreColor();
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(type)));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(useHitscore)));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(hitscoreThreshold)));
+            UpdateMaxThreshold();
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(notUseMiss)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(threshold)));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(color)));
 
             Parse(parent);
@@ -111,22 +112,42 @@ namespace NiceMiss.UI
             set
             {
                 hitscoreColor.type = (HitscoreColor.TypeEnum)value;
+                hitscoreColor.threshold = 0;
+
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(type)));
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(useHitscore)));
+                UpdateMaxThreshold();
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(notUseMiss)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(threshold)));
             }
         }
 
         [UIAction("typeFormatter")]
         private string TypeFormatter(int typeNum) => ((HitscoreColor.TypeEnum)typeNum).ToString();
 
-        [UIValue("hitscoreThreshold")]
-        private int hitscoreThreshold
+        [UIValue("threshold")]
+        private int threshold
         {
             get => hitscoreColor.threshold;
             set
             {
                 hitscoreColor.threshold = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(hitscoreThreshold)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(threshold)));
+            }
+        }
+
+        private void UpdateMaxThreshold()
+        {
+            switch (hitscoreColor.type)
+            {
+                case HitscoreColor.TypeEnum.Hitscore:
+                    thresholdSlider.slider.maxValue = 115;
+                    break;
+                case HitscoreColor.TypeEnum.Angle:
+                    thresholdSlider.slider.maxValue = 100;
+                    break;
+                case HitscoreColor.TypeEnum.Accuracy:
+                    thresholdSlider.slider.maxValue = 15;
+                    break;
             }
         }
 
@@ -144,7 +165,7 @@ namespace NiceMiss.UI
         [UIAction("addEntry")]
         private void AddEntry() => EntryAdded?.Invoke(hitscoreColor);
 
-        [UIValue("useHitscore")]
-        private bool useHitscore => hitscoreColor.type == HitscoreColor.TypeEnum.Hitscore;
+        [UIValue("notUseMiss")]
+        private bool notUseMiss => hitscoreColor.type != HitscoreColor.TypeEnum.Miss;
     }
 }

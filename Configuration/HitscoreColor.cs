@@ -31,7 +31,9 @@ namespace NiceMiss.Configuration
         public enum TypeEnum
         {
             Miss,
-            Hitscore
+            Hitscore,
+            Angle,
+            Accuracy
         }
     }
 }
