@@ -99,10 +99,10 @@ namespace NiceMiss.UI
                 }
                 else
                 {
-                    customListTableData.data.Add(new CustomListTableData.CustomCellInfo($"{hitscoreColor.threshold} (<color={colorString}>{colorString}</color>)"));
+                    customListTableData.data.Add(new CustomListTableData.CustomCellInfo($"{hitscoreColor.type}: {hitscoreColor.threshold} (<color={colorString}>{colorString}</color>)"));
                 }
             }
-            customListTableData.tableView.ReloadData();
+            customListTableData.tableView.ReloadDataKeepingPosition();
         }
 
         private void CloseModalsOnDismiss(bool removedFromHierarchy, bool screenSystemDisabling)
@@ -153,6 +153,36 @@ namespace NiceMiss.UI
         {
             this.selectedIndex = selectedIndex;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(entrySelected)));
+        }
+
+        [UIAction("moveEntryUp")]
+        private void MoveEntryUp()
+        {
+            if (selectedIndex > 0)
+            {
+                int tmpIndex = selectedIndex - 1;
+                HitscoreColor tmp = PluginConfig.Instance.HitscoreColors[tmpIndex];
+                PluginConfig.Instance.HitscoreColors[tmpIndex] = PluginConfig.Instance.HitscoreColors[selectedIndex];
+                PluginConfig.Instance.HitscoreColors[selectedIndex] = tmp;
+                UpdateTable();
+                customListTableData.tableView.SelectCellWithIdx(tmpIndex);
+                HitscoreSelect(customListTableData.tableView, tmpIndex);
+            }
+        }
+
+        [UIAction("moveEntryDown")]
+        private void MoveEntryDown()
+        {
+            if (selectedIndex < PluginConfig.Instance.HitscoreColors.Count - 1)
+            {
+                int tmpIndex = selectedIndex + 1;
+                HitscoreColor tmp = PluginConfig.Instance.HitscoreColors[tmpIndex];
+                PluginConfig.Instance.HitscoreColors[tmpIndex] = PluginConfig.Instance.HitscoreColors[selectedIndex];
+                PluginConfig.Instance.HitscoreColors[selectedIndex] = tmp;
+                UpdateTable();
+                customListTableData.tableView.SelectCellWithIdx(tmpIndex);
+                HitscoreSelect(customListTableData.tableView, tmpIndex);
+            }
         }
 
         [UIAction("removeEntry")]

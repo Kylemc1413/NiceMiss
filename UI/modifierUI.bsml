@@ -6,11 +6,17 @@
 	<slider-setting id='widthSlider' active='~useOutlineOrHitscore' text='Outline Thickness' value='outlineWidth' increment='0.1' min='0' max='5' hover-hint='The thickness of the outline around the notes.' apply-on-change='true' bind-value='true' />
 	<color-setting id='leftColorSetting' active='~useOutline' text='Left Miss Color' value='leftMiss' apply-on-change='true' bind-value='true' />
     <color-setting id='rightColorSetting' active='~useOutline' text='Right Miss Color' value='rightMiss' apply-on-change='true' bind-value='true' />
-	<vertical active='~useHitscore' vertical-fit='PreferredSize' pref-height='30'>
-		<page-button event-click='hitscoreList#PageUp' direction='Up' />
-		<list id='hitscoreList' list-style='Simple' expand-cell='false' select-cell='hitscoreSelect' />
-		<page-button event-click='hitscoreList#PageDown' direction='Down' />
-	</vertical>
+	<horizontal horizontal-fit='PreferredSize' active='~useHitscore' spacing='2'>
+		<vertical vertical-fit='PreferredSize' pref-height='30'>
+			<page-button event-click='hitscoreList#PageUp' direction='Up' />
+			<list id='hitscoreList' list-style='Simple' expand-cell='false' select-cell='hitscoreSelect' />
+			<page-button event-click='hitscoreList#PageDown' direction='Down' />
+		</vertical>
+		<vertical spacing='1'>
+			<button text='🔼' on-click='moveEntryUp' hover-hint='Move priority up' interactable='~entrySelected' />
+			<button text='🔽' on-click='moveEntryDown' hover-hint='Move priority down' interactable='~entrySelected' />
+		</vertical>
+	</horizontal>
 	<horizontal active='~useHitscore' horizontal-fit='PreferredSize' spacing='0'>
 		<button text='+' on-click='addEntry' />
 		<button text='-' on-click='removeEntry' interactable='~entrySelected' />
