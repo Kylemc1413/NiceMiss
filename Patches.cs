@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using UnityEngine;
 using BS_Utils.Utilities;
+using NiceMiss.Configuration;
 
 namespace NiceMiss
 {
@@ -26,7 +27,7 @@ namespace NiceMiss
             outline.enabled = false;
             outline.OutlineMode = Outline.Mode.OutlineVisible;
             outline.OutlineColor = c;
-            outline.OutlineWidth = 4f;
+            outline.OutlineWidth = PluginConfig.Instance.OutlineWidth;
         }
 
         public static void SetNoteColour(ColorNoteVisuals noteVis, Color c)

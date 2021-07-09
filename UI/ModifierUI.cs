@@ -7,6 +7,7 @@ using System.ComponentModel;
 using NiceMiss.Configuration;
 using BeatSaberMarkupLanguage.Components;
 using HMUI;
+using BeatSaberMarkupLanguage.Components.Settings;
 
 namespace NiceMiss.UI
 {
@@ -15,6 +16,18 @@ namespace NiceMiss.UI
         private readonly GameplaySetupViewController gameplaySetupViewController;
         private readonly HitscoreModal hitscoreModal;
         public event PropertyChangedEventHandler PropertyChanged;
+
+        [UIComponent("multiplierSlider")]
+        private SliderSetting multiplierSlider;
+
+        [UIComponent("widthSlider")]
+        private SliderSetting widthSlider;
+
+        [UIComponent("leftButton")]
+        private RectTransform leftButton;
+
+        [UIComponent("rightButton")]
+        private RectTransform rightButton;
 
         [UIComponent("hitscoreList")]
         public CustomListTableData customListTableData;
@@ -59,8 +72,14 @@ namespace NiceMiss.UI
         [UIAction("#post-parse")]
         private void PostParse()
         {
+            SliderButton.Register(GameObject.Instantiate(leftButton), GameObject.Instantiate(rightButton), multiplierSlider, 0.05f);
+            SliderButton.Register(GameObject.Instantiate(leftButton), GameObject.Instantiate(rightButton), widthSlider, 0.1f);
+            GameObject.Destroy(leftButton.gameObject);
+            GameObject.Destroy(rightButton.gameObject);
+
             leftColorModal = leftColorSetting.transform.Find("BSMLModalColorPicker");
             rightColorModal = rightColorSetting.transform.Find("BSMLModalColorPicker");
+
             UpdateTable();
         }
 
@@ -71,7 +90,7 @@ namespace NiceMiss.UI
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(entrySelected)));
 
             customListTableData.data.Clear();
-            foreach(var hitscoreColor in PluginConfig.Instance.HitscoreColors)
+            foreach (var hitscoreColor in PluginConfig.Instance.HitscoreColors)
             {
                 string colorString = $"#{ColorUtility.ToHtmlStringRGB(hitscoreColor.color)}";
                 if (hitscoreColor.type == HitscoreColor.TypeEnum.Miss)
@@ -166,6 +185,7 @@ namespace NiceMiss.UI
                 PluginConfig.Instance.Mode = (PluginConfig.ModeEnum)value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(mode)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(useMultiplier)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(useOutlineOrHitscore)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(useOutline)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(useHitscore)));
             }
@@ -173,6 +193,9 @@ namespace NiceMiss.UI
 
         [UIValue("useMultiplier")]
         private bool useMultiplier => mode == 0;
+
+        [UIValue("useOutlineOrHitscore")]
+        private bool useOutlineOrHitscore => mode == 1 || mode == 2;
 
         [UIValue("useOutline")]
         private bool useOutline => mode == 1;
@@ -188,6 +211,17 @@ namespace NiceMiss.UI
             {
                 PluginConfig.Instance.ColorMultiplier = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(colorMultiplier)));
+            }
+        }
+
+        [UIValue("outlineWidth")]
+        private float outlineWidth
+        {
+            get => PluginConfig.Instance.OutlineWidth;
+            set
+            {
+                PluginConfig.Instance.OutlineWidth = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(outlineWidth)));
             }
         }
 

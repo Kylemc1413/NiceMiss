@@ -20,6 +20,8 @@ namespace NiceMiss.Configuration
 
         public virtual float ColorMultiplier { get; set; } = 1.85f;
 
+        public virtual float OutlineWidth { get; set; } = 4f;
+
         [UseConverter(typeof(HexColorConverter))]
         public virtual Color LeftMissColor { get; set; } = Color.red;
 
