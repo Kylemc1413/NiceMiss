@@ -56,10 +56,6 @@
       <HintPath>$(BeatSaberDir)\Plugins\BSML.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="BS_Utils, Version=1.7.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Beat Saber\Plugins\BS_Utils.dll</HintPath>
-    </Reference>
     <Reference Include="Colors, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Beat Saber\Beat Saber_Data\Managed\Colors.dll</HintPath>
@@ -146,11 +142,29 @@
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.VRModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Zenject, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <Private>False</Private>
+      <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Zenject.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Zenject-usage, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <Private>False</Private>
+      <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Zenject-usage.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Config.cs" />
+    <Compile Include="UI\SliderButton.cs" />
     <EmbeddedResource Include="QuickOutline\QuickOutline-License" />
+    <Compile Include="Configuration\HitscoreColor.cs" />
+    <Compile Include="Configuration\PluginConfig.cs" />
+    <Compile Include="Installers\NiceMissGameInstaller.cs" />
+    <Compile Include="Installers\NiceMissMenuInstaller.cs" />
+    <Compile Include="NiceMissManager.cs" />
+    <Compile Include="NoteOutliner.cs" />
+    <Compile Include="NoteTracker.cs" />
     <Compile Include="QuickOutline\Scripts\Outline.cs" />
+    <Compile Include="UI\HitscoreModal.cs" />
     <Compile Include="UI\ModifierUI.cs" />
     <Compile Include="Patches.cs" />
     <Compile Include="Plugin.cs" />
@@ -164,6 +178,7 @@
     <None Include=".gitignore" />
     <EmbeddedResource Include="UI\modifierUI.bsml" />
     <EmbeddedResource Include="QuickOutline\Resources\outlineBundle" />
+    <EmbeddedResource Include="UI\hitscoreModal.bsml" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
