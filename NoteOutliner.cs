@@ -25,7 +25,7 @@ namespace NiceMiss
                 objectmanager.noteWasCutEvent += Objectmanager_noteWasCutEvent;
                 objectmanager.noteWasMissedEvent += Objectmanager_noteWasMissedEvent;
             }
-            missColor = PluginConfig.Instance.Mode == PluginConfig.ModeEnum.Hitscore ? PluginConfig.Instance.HitscoreColors.Find(x => x.type == HitscoreColor.TypeEnum.Miss) : null;
+            missColor = PluginConfig.Instance.Mode == PluginConfig.ModeEnum.Outline ? PluginConfig.Instance.HitscoreColors.Find(x => x.type == HitscoreColor.TypeEnum.Miss) : null;
         }
 
         public void Dispose()
@@ -47,12 +47,11 @@ namespace NiceMiss
             if (!noteRating.Equals(default(KeyValuePair<NoteData, NoteTracker.Rating>)))
             {
                 Color newC = Color.clear;
-                if (PluginConfig.Instance.Mode != PluginConfig.ModeEnum.Hitscore && noteRating.Value.missed)
+                if (PluginConfig.Instance.Mode == PluginConfig.ModeEnum.Multiplier && noteRating.Value.missed)
                 {
-                    newC = PluginConfig.Instance.Mode == PluginConfig.ModeEnum.Multiplier ? outline.OutlineColor * PluginConfig.Instance.ColorMultiplier :
-                    obj.noteData.colorType == ColorType.ColorA ? PluginConfig.Instance.LeftMissColor : PluginConfig.Instance.RightMissColor;
+                    newC = outline.OutlineColor * PluginConfig.Instance.ColorMultiplier;
                 }
-                else if (PluginConfig.Instance.Mode == PluginConfig.ModeEnum.Hitscore)
+                else if (PluginConfig.Instance.Mode == PluginConfig.ModeEnum.Outline)
                 {
                     if (noteRating.Value.missed && missColor != null)
                     {

@@ -35,16 +35,6 @@ namespace NiceMiss.UI
         [UIComponent("root")]
         private readonly RectTransform rootTransform;
 
-        [UIComponent("leftColorSetting")]
-        private RectTransform leftColorSetting;
-
-        private Transform leftColorModal;
-
-        [UIComponent("rightColorSetting")]
-        private RectTransform rightColorSetting;
-
-        private Transform rightColorModal;
-
         public ModifierUI(GameplaySetupViewController gameplaySetupViewController, HitscoreModal hitscoreModal)
         {
             this.gameplaySetupViewController = gameplaySetupViewController;
@@ -56,7 +46,6 @@ namespace NiceMiss.UI
             GameplaySetup.instance.AddTab(nameof(NiceMiss), "NiceMiss.UI.modifierUI.bsml", this);
             selectedIndex = -1;
 
-            gameplaySetupViewController.didDeactivateEvent += CloseModalsOnDismiss;
             hitscoreModal.EntryAdded += OnEntryAdded;
             PluginConfig.Instance.ConfigChanged += UpdateTable;
         }
@@ -64,7 +53,6 @@ namespace NiceMiss.UI
         public void Dispose()
         {
             GameplaySetup.instance?.RemoveTab(nameof(NiceMiss));
-            gameplaySetupViewController.didDeactivateEvent -= CloseModalsOnDismiss;
             hitscoreModal.EntryAdded -= OnEntryAdded;
             PluginConfig.Instance.ConfigChanged -= UpdateTable;
         }
@@ -76,9 +64,6 @@ namespace NiceMiss.UI
             SliderButton.Register(GameObject.Instantiate(leftButton), GameObject.Instantiate(rightButton), widthSlider, 0.1f);
             GameObject.Destroy(leftButton.gameObject);
             GameObject.Destroy(rightButton.gameObject);
-
-            leftColorModal = leftColorSetting.transform.Find("BSMLModalColorPicker");
-            rightColorModal = rightColorSetting.transform.Find("BSMLModalColorPicker");
 
             UpdateTable();
         }
@@ -103,21 +88,6 @@ namespace NiceMiss.UI
                 }
             }
             customListTableData.tableView.ReloadDataKeepingPosition();
-        }
-
-        private void CloseModalsOnDismiss(bool removedFromHierarchy, bool screenSystemDisabling)
-        {
-            if (leftColorSetting != null && leftColorModal != null)
-            {
-                leftColorModal.SetParent(leftColorSetting);
-                leftColorModal.gameObject.SetActive(false);
-            }
-
-            if (rightColorSetting != null && rightColorModal != null)
-            {
-                rightColorModal.SetParent(rightColorSetting);
-                rightColorModal.gameObject.SetActive(false);
-            }
         }
 
         [UIAction("addEntry")]
@@ -215,23 +185,15 @@ namespace NiceMiss.UI
                 PluginConfig.Instance.Mode = (PluginConfig.ModeEnum)value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(mode)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(useMultiplier)));
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(useOutlineOrHitscore)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(useOutline)));
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(useHitscore)));
             }
         }
 
         [UIValue("useMultiplier")]
         private bool useMultiplier => mode == 0;
 
-        [UIValue("useOutlineOrHitscore")]
-        private bool useOutlineOrHitscore => mode == 1 || mode == 2;
-
         [UIValue("useOutline")]
         private bool useOutline => mode == 1;
-
-        [UIValue("useHitscore")]
-        private bool useHitscore => mode == 2;
 
         [UIValue("colorMultiplier")]
         private float colorMultiplier
@@ -252,28 +214,6 @@ namespace NiceMiss.UI
             {
                 PluginConfig.Instance.OutlineWidth = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(outlineWidth)));
-            }
-        }
-
-        [UIValue("leftMiss")]
-        private Color leftMissColor
-        {
-            get => PluginConfig.Instance.LeftMissColor;
-            set
-            {
-                PluginConfig.Instance.LeftMissColor = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(leftMissColor)));
-            }
-        }
-
-        [UIValue("rightMiss")]
-        private Color rightMissColor
-        {
-            get => PluginConfig.Instance.RightMissColor;
-            set
-            {
-                PluginConfig.Instance.RightMissColor = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(rightMissColor)));
             }
         }
     }

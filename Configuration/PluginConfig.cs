@@ -50,8 +50,7 @@ namespace NiceMiss.Configuration
         public enum ModeEnum
         {
             Multiplier,
-            Outline,
-            Hitscore
+            Outline
         }
     }
 }
