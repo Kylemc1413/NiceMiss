@@ -2,7 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/beat-saber-modding-group/BSIPA-MetadataFileSchema/master/Schema.json",
   "id": "NiceMiss",
   "name": "NiceMiss",
-  "author": "Kyle 1413",
+  "author": "Kyle 1413 & PixelBoom",
   "version": "1.0.0",
   "description": "Points out notes that were missed on a previous playthrough of a song",
   "gameVersion": "1.16.1",
