@@ -14,11 +14,9 @@ namespace NiceMiss
         static void Postfix(ColorNoteVisuals __instance, NoteController ____noteController, MaterialPropertyBlockController[] ____materialPropertyBlockControllers, int ____colorId, ref ColorManager ____colorManager)
         {
             if (!NiceMissManager.modActive) return;
-            //    Debug.Log("ColorNoteVis Init");
             var outline = ____noteController.gameObject.GetComponentInChildren<Outline>();
             if (outline == null)
             {
-          //      Debug.Log("Outline Not Found");
                 outline = ____noteController.gameObject.AddComponent<Outline>();
             }
 

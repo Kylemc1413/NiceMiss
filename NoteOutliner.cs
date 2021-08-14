@@ -37,7 +37,6 @@ namespace NiceMiss
 
         private void Objectmanager_noteDidStartJumpEvent(NoteController obj)
         {
-            //    Color c = colorManager.ColorForType(obj.noteData.colorType);
             var outline = obj.gameObject.GetComponentInChildren<Outline>();
             if (outline == null)
             {
