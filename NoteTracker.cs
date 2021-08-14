@@ -24,7 +24,16 @@ namespace NiceMiss
         {
             scoreController.noteWasMissedEvent += ScoreController_noteWasMissedEvent;
             scoreController.noteWasCutEvent += ScoreController_noteWasCutEvent;
-            currentMapData = new Dictionary<NoteData, Rating>();
+
+            if (mapData.TryGetValue(difficultyBeatmap, out Dictionary<NoteData, Rating> matchedMapData))
+            {
+                currentMapData = matchedMapData;
+            }
+            else
+            {
+                currentMapData = new Dictionary<NoteData, Rating>();
+            }
+
             swingCounterCutInfo = new Dictionary<ISaberSwingRatingCounter, NoteCutInfo>();
             noteCutInfoData = new Dictionary<NoteCutInfo, NoteData>();
         }
