@@ -3,7 +3,7 @@
   "id": "NiceMiss",
   "name": "NiceMiss",
   "author": "Kyle 1413",
-  "version": "0.5.0",
+  "version": "1.0.0",
   "description": "Points out notes that were missed on a previous playthrough of a song",
   "gameVersion": "1.16.1",
   "dependsOn": {
